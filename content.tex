@@ -14,3 +14,86 @@
 \begin{frame}{Overview}
 \tableofcontents
 \end{frame}
+
+\section{Preliminaries}
+
+\subsection{Intuitionistic Propositional Logic}
+
+\begin{frame}{Intuitionistic Logic}
+    Intuitionistic propositional logic, IPL, differs from the classical one, by rejecting the law of excluded middle (\textit{principium tertii exclusi}).
+    
+    As a result, the following rules are not valid:
+    \[
+    \infer[\mbox{RAA}]{\Gamma \vdash \alpha}{\Gamma, \neg\alpha \vdash \bot}
+    ~~~~ ~~~~
+    \infer[\mbox{DNE}]{\Gamma \vdash \alpha}{\Gamma \vdash \neg\neg\alpha}
+    \]
+\end{frame}
+
+\begin{frame}{Language of IPL}
+    The language of IPL is defined by the following grammar:
+    \[
+    \alpha, \beta ::= \bot \mid a \mid \alpha \rightarrow \beta \mid \alpha \vee \beta \mid \alpha \wedge \beta,
+    \]
+    where
+    \begin{itemize}
+        \item $a$ ranges over atomic formulae,
+        \item $\bot$ is contradiction or falsity,
+        \item $\rightarrow$ is implication, $\vee$ is disjunction, and $\wedge$ is conjunction,
+        \item $\neg\alpha$ is defined as $\alpha \rightarrow \bot$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{IPL Inference Rules}
+    The inference rules for IPL consists of the following (using natural deduction system with sequent):
+    \begin{itemize}
+        \item Axiom. $\Gamma, \alpha \vdash \alpha$.
+        \item Principle of explosion (\textit{ex falso quodlibet}).
+        \[
+        \infer[\mbox{EFQ}]{\Gamma \vdash \beta}{\Gamma \vdash \bot}
+        \]
+        \item Implication rules.
+        \[
+        \infer[\rightarrow\mbox{-I}]{\Gamma \vdash \alpha \rightarrow \beta}{\Gamma, \alpha \vdash \beta}
+        ~~~~ ~~~~
+        \infer[\rightarrow\mbox{-E}]{\Gamma_1, \Gamma_2 \vdash \beta}{\Gamma_1 \vdash \alpha & \Gamma_2 \vdash \alpha \rightarrow \beta}
+        \]
+        \item Disjunction rules.
+        \[
+        \infer[\vee\mbox{-I}]{\Gamma\vdash \alpha_1 \vee \alpha_2}{\Gamma \vdash \alpha_i}
+        ~~~~ ~~~~
+        \infer[\vee\mbox{-E}]{\Gamma_1, \Gamma_2 \vdash \beta}{
+            \Gamma_1 \vdash \alpha_1 \vee \alpha_2
+            &
+            \Gamma_2, \alpha_1 \vdash \beta
+            &
+            \Gamma_2, \alpha_2 \vdash \beta
+        }
+        \]
+        \item Conjunction rules.
+        \[
+        \infer[\wedge\mbox{-I}]{\Gamma_1, \Gamma_2 \vdash \alpha_1 \wedge \alpha_2}{
+            \Gamma_1 \vdash \alpha_1
+            &
+            \Gamma_2 \vdash \alpha_2
+        }
+        ~~~~ ~~~~
+        \infer[\wedge\mbox{-E}]{\Gamma \vdash \alpha_i}{
+            \Gamma \vdash \alpha_1 \wedge \alpha_2
+        }
+        \]
+    \end{itemize}
+\end{frame}
+
+\section{Linear-Time Temporal Type Theory}
+
+\section{Coq Implementation}
+
+\section{TypeScript Implementation}
+
+\begin{frame}[t,allowframebreaks]
+\nocite{*}
+\frametitle{References}
+\bibliographystyle{apalike}
+\bibliography{ref.bib}
+\end{frame}
