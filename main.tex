@@ -1,0 +1,66 @@
+\documentclass{beamer}
+\usetheme[pageofpages=of,% String used between the current page and the
+                         % total page count.
+          bullet=circle,% Use circles instead of squares for bullets.
+          titleline=true,% Show a line below the frame title.
+          alternativetitlepage=true,% Use the fancy title page.
+          titlepagelogo=logo-uni-freiburg,% Logo for the first page.
+          watermark=watermark-uni-freiburg,% Watermark used in every page.
+          watermarkheight=100px,% Height of the watermark.
+          watermarkheightmult=9,% The watermark image is 4 times bigger
+                                % than watermarkheight.
+          ]{UniFreiburg}
+
+
+% color theme
+\usecolortheme{unifreiburg}
+
+% fonts
+\usepackage[T1]{fontenc}
+% \usepackage{tgpagella}
+% \usepackage[euler-digits,euler-hat-accent]{eulervm}
+\usepackage{newtxtt}
+\usepackage{yfonts}
+\usepackage{minted}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{blindtext}
+\usepackage{fourier}
+\usepackage{moresize}
+\usepackage{mathtools}
+\usepackage{tikz-cd}
+\setbeamertemplate{caption}[numbered]
+
+% AMS Euler
+\usepackage{newpxtext,newpxmath}
+\usepackage{euler}
+\usepackage{eucal}
+
+\usepackage{url}
+\usepackage{hyperref}
+
+\usepackage{proof}
+
+\newcommand{\lit}[1]{\mathrm{#1}}
+\newcommand{\tab}{\ \ \ \ }
+
+% use serif
+\usefonttheme{serif}
+
+% listing
+\usepackage{listings}
+\usepackage{minted}
+\setbeameroption{show notes}
+
+% arial black for title
+\usefonttheme{structurebold}
+\setbeamerfont{title}{series=\bfseries,series=\bfseries,family={\fontfamily{phv}}}
+
+\author{Mohammad-Ali~\textsc{A'r\^abi}}
+\title[A Basis for Event-Driven Programming]{A BASIS FOR EVENT-DRIVEN PROGRAMMING}
+\institute{\textswab{Albert-Ludwigs-Universit\"at Freiburg}}
+\date{Monday, June 7th, 2021}
+
+\begin{document}
+\include{content}
+\end{document}
