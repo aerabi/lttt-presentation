@@ -5,6 +5,17 @@
 % a hack, since colons do not render in the math environments
 \renewcommand{\colon}{\mbox{~:~}}
 
+\newcommand{\ang}[1]{\left\langle #1 \right\rangle}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\floor}[1]{\left\lfloor #1 \right\rfloor}
+\renewcommand{\diamond}{\lozenge}
+\newcommand{\T}{\mathfrak{T}}
+\newcommand{\A}{\mathfrak{A}}
+\renewcommand{\t}{\mathfrak{t}}
+\newcommand{\e}{\mathfrak{e}}
+\renewcommand{\v}{\mathfrak{v}}
+\newcommand{\n}{\mathfrak{n}}
+
 \begin{frame}[fragile]
     \frametitle{Main Goal}
   
@@ -40,7 +51,8 @@
         \item $a$ ranges over atomic formulae,
         \item $\bot$ is contradiction or falsity,
         \item $\rightarrow$ is implication, $\vee$ is disjunction, and $\wedge$ is conjunction,
-        \item $\neg\alpha$ is defined as $\alpha \rightarrow \bot$.
+        \item $\neg\alpha$ is defined as $\alpha \rightarrow \bot$,
+        \item $\top$ is defined as $\neg\bot$.
     \end{itemize}
 \end{frame}
 
@@ -83,6 +95,75 @@
         }
         \]
     \end{itemize}
+    
+    \begin{example}
+    Prove that $\Gamma \vdash \top$ for all $\Gamma$.
+    \end{example}
+\end{frame}
+
+\subsection{Curry--Howard Correspondence}
+
+\begin{frame}{Simply Typed Lambda Calculus}
+    The language of simply typed lambda calculus, TLC($\rightarrow$), is defined by:
+    \begin{align*}
+    \T, \mathfrak{S} &::= T \mid \T \rightarrow \mathfrak{S}, \\
+    \t &::= x \mid \lambda x. \t \mid \t_1 \t_2.
+    \end{align*}
+    
+    Typing rules consist of:
+    \begin{itemize}
+        \item Axiom. $\Gamma, x : \T \vdash x : \T$.
+        \item Implication rules.
+        \[
+        \infer[\rightarrow\mbox{-I}]{\Gamma \vdash \lambda x. \t : \T \rightarrow \mathfrak{S}}{\Gamma, x : \T \vdash \t : \mathfrak{S}}
+        ~~~~ ~~~~
+        \infer[\rightarrow\mbox{-E}]{\Gamma \vdash \t_1\t_2 : \mathfrak{S}}{
+            \Gamma \vdash \t_1 : \T \rightarrow \mathfrak{S}
+            &
+            \Gamma \vdash \t_2 : \T
+        }
+        \]
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Extending Simply Typed Lambda Calculus}
+    One can extend TLC($\rightarrow$) by adding tuples, unions, and unit and bottom type:
+    \begin{align*}
+    i ::=&~ 1 \mid 2, \\
+    \T, \mathfrak{S} ::=&~ T \mid \mathtt{Unit} \mid \mathtt{Void} \mid \T \rightarrow \mathfrak{S} \mid \T \times \mathfrak{S} \mid \T + \mathfrak{S}, \\
+    \t ::=&~ x \mid \lambda x. \t \mid \t_1 \t_2 \mid () \mid (\t_1, \t_2) \mid \pi_i(\t) \mid \iota_i(\t) \\ &\mid \mathtt{case}~\t~\mathtt{of}~(\iota_1 x_1 \rightarrow \t_1 \mid \iota_2 x_2 \rightarrow \t_2) \\
+    &\mid \mathtt{case}~\t~\mathtt{of}~().
+    \end{align*}
+    
+    The additional rules are:
+    \begin{itemize}
+        \item Unit and bottom type rules.
+        \[
+        \infer[\mathtt{Unit}\mbox{-I}]{\Gamma \vdash () : \mathtt{Unit}}{}
+        ~~~~ ~~~~
+        \infer[\mathtt{Void}\mbox{-E}]{\Gamma \vdash \mathtt{case}~\t~\mathtt{of}~() : \mathfrak{S}}{\Gamma \vdash \t : \mathtt{Void}}
+        \]
+        \item Tuple rules.
+        \[
+        \infer[\times\mbox{-I}]{\Gamma \vdash (\t_1, \t_2) : \T_1 \times \T_2}{\Gamma \vdash \t_1 : \T_1 & \Gamma \vdash \t_2 : \T_2}
+        ~~~~ ~~~~
+        \infer[\times\mbox{-E}]{\Gamma \vdash \pi_i \t : \T_i}{\Gamma \vdash \t : \T_1 \times \T_2}
+        \]
+        \item Union type rules.
+        \begin{gather*}
+        \infer[+\mbox{-I}]{\Gamma \vdash \iota_i \t : \T_1 + \T_2}{\Gamma \vdash \t : \T_i}
+        \\ \\
+        \infer[+\mbox{-E}]{\Gamma \vdash \mathtt{case}~\t~\mathtt{of}~(\iota_1 x_1 \rightarrow \t_1 \mid \iota_2 x_2 \rightarrow \t_2) : \mathfrak{S}}{
+            \Gamma \vdash \t : \T_1 + \T_2
+            &
+            \Gamma, x_1 : \T_1 \vdash \t_1 : \mathfrak{S}
+            &
+            \Gamma, x_2 : \T_2 \vdash \t_2 : \mathfrak{S}
+        }
+        \end{gather*}
+    \end{itemize}
+    
+    We call the extended TLC($\rightarrow$), TLC($\rightarrow, \times, +, \mathtt{Unit}, \mathtt{Void}$) or simply TLC.
 \end{frame}
 
 \section{Linear-Time Temporal Type Theory}
