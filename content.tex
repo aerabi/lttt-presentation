@@ -126,6 +126,26 @@
     \end{itemize}
 \end{frame}
 
+\begin{frame}{More Types}
+\begin{itemize}
+    \item Unit type, is a type inhabited by a single term.
+    \begin{tabular}{l|cc}
+        Language & Type & Value \\
+        \hline
+        Scala & \texttt{Unit} & \texttt{()} \\
+        Haskel, Rust, Swift & \texttt{()} & \texttt{()} \\
+        ML, OCaml, F\# & \texttt{unit} & \texttt{()} \\
+        TypeScript & \texttt{undefined} & \texttt{undefined}
+    \end{tabular}
+    \item A bottom type, is a type that has no value. E.g. \texttt{Nothing} in Scala and \texttt{never} or \texttt{void} in TypeScript.
+    \item Union type (aka tagged union or sum type) is a union of other types. The actual type is usually decided in the runtime by pattern matching.
+    
+    \texttt{type Tree = Node | Leaf;}
+    \item Product type is usually realized as the type of tuples.
+    
+\end{itemize}
+\end{frame}
+
 \begin{frame}[allowframebreaks]{Extending Simply Typed Lambda Calculus}
     One can extend TLC($\rightarrow$) by adding tuples, unions, and unit and bottom type:
     \begin{align*}
@@ -164,6 +184,65 @@
     \end{itemize}
     
     We call the extended TLC($\rightarrow$), TLC($\rightarrow, \times, +, \mathtt{Unit}, \mathtt{Void}$) or simply TLC.
+\end{frame}
+
+\begin{frame}{Curry--Howard Correspondence}
+\begin{theorem}[\cite{Howard1969TheFN}]
+The types in $\mathrm{TLC}$ form an $\mathrm{IPL}$. Furthermore:
+\begin{itemize}
+    \item If $\Gamma \vdash \t : \alpha$ then $\pi_2[\Gamma] \vdash \alpha$,
+    \item If $\Delta \vdash \alpha$ then there is a $\Gamma$ and a $\t$ that $\Delta = \pi_2[\Gamma]$ and $\Gamma \vdash \t : \alpha$.
+\end{itemize}
+\end{theorem}
+\end{frame}
+
+\subsection{Linear Logic}
+
+\begin{frame}{Structural Rules}
+    \begin{itemize}
+        \item \textbf{Weakening}. Which states that hypotheses of a sequent could be extended.
+        \begin{gather*}
+            \infer=[\mbox{Weak}]{\Gamma_1, \alpha, \Gamma_2 \vdash \beta}{\Gamma_1, \Gamma_2 \vdash \beta}
+            ~~~~ ~~~~
+            \infer=[\mbox{Weak}]{\Gamma_1, x : \A, \Gamma_2\vdash \t : \mathfrak{B}}{\Gamma_1, \Gamma_2\vdash \t : \mathfrak{B}}
+        \end{gather*}
+        \item \textbf{Contraction}. Which states that two similar (or unifiable) hypotheses can be replaced by a single hypothesis.
+        \begin{gather*}
+            \infer=[\mbox{Contr}]{\Gamma_1, \alpha, \Gamma_2 \vdash \beta}{\Gamma_1, \alpha, \alpha, \Gamma_2 \vdash \beta}
+            ~~~~ ~~~~
+            \infer=[\mbox{Contr}]{\Gamma_1, x : \A, \Gamma_2 \vdash \t : \mathfrak{B}}{\Gamma_1, x : \A, x : \A, \Gamma_2 \vdash \t : \mathfrak{B}}
+        \end{gather*}
+        \item \textbf{Exchange}. Which states that two hypotheses may be swapped.
+        \begin{gather*}
+            \infer=[\mbox{Exch}]{\Gamma_1, \alpha_2, \alpha_1, \Gamma_2 \vdash \beta}{\Gamma_1, \alpha_1, \alpha_2, \Gamma_2 \vdash \beta}
+            ~~~~ ~~~~
+            \infer=[\mbox{Exch}]{\Gamma_1, x_2 : \A_2, x_1 : \A_1 \Gamma_2 \vdash \t : \mathfrak{B}}{\Gamma_1, x_1 : \A_1, x_2 : \A_2, \Gamma_2 \vdash \t : \mathfrak{B}}
+        \end{gather*}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Substructural Logics / Type Systems}
+    \begin{table}[!ht]
+    \centering
+    \begin{tabular}{l|ccc}
+         & W & C & E \\
+        \hline
+        Unrestricted & \checkmark & \checkmark & \checkmark \\
+        Affine & \checkmark &  & \checkmark \\
+        Relevant &  & \checkmark & \checkmark \\
+        Linear & & & \checkmark \\
+        Ordered
+    \end{tabular}
+    \caption{Substructural logics / type systems}
+    \label{tab:my_label}
+\end{table}
+
+\begin{itemize}
+    \item \textbf{Affine}. Every variable can be used at most once.
+    \item \textbf{Relevant}. Every variable must be used at least once.
+    \item \textbf{Linear}. Every variable must be used exactly once.
+    \item \textbf{Ordered}. Every variable must be used exactly once and in the order in which it is introduced.
+\end{itemize}
 \end{frame}
 
 \section{Linear-Time Temporal Type Theory}
