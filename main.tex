@@ -54,6 +54,16 @@
 
 \newtheorem{axiom}{Axiom}
 
+% section slides
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \usebeamerfont{title}\insertsectionhead\par%
+  \vfill
+  \end{frame}
+}
+
 % arial black for title
 \usefonttheme{structurebold}
 \setbeamerfont{title}{series=\bfseries,series=\bfseries,family={\fontfamily{phv}}}
