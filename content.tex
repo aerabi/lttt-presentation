@@ -525,6 +525,56 @@ Qed.
 
 \section{TypeScript Implementation}
 
+\begin{frame}{Linear Embedded Language}
+    \begin{align*}
+    \T &::= T \mid \cdots \mid \A \\
+    \A &::= \mathtt{LUnit} \mid \mathtt{LZero} \mid \mbox{\texttt{LPair<}}\T, \T\mbox{\texttt{>}} \mid \mbox{\texttt{LFun<}}\T, \T\mbox{\texttt{>}} \mid \mbox{\texttt{Lin<}}\T\mbox{\texttt{>}} \mid \mbox{\texttt{Single<}}\T\mbox{\texttt{>}}.
+    \end{align*}
+    
+    \begin{itemize}
+        \item \texttt{LZero} represents $0$ and is equal to \texttt{Lin<void>},
+        \item \texttt{LUnit} represents $1$ and is equal to \texttt{Lin<undefined>},
+        \item \texttt{LPair<}$\T_1, \T_2$\texttt{>} represents $(\floor{\T_1}, \floor{\T_2})$,
+        \item \texttt{LFun<}$\T_1, \T_2$\texttt{>} represents $\floor{\T_1} \multimap \floor{\T_2}$,
+        \item \texttt{Lin<}$\T$\texttt{>} represents $\floor{\T}$, and
+        \item \texttt{Single<}$\T$\texttt{>} represents $\diamond\floor{\T}$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{TypeScript Embedding in Action}
+    \begin{minted}[fontsize=\small]{typescript}
+import { Single } from 'lttt';
+
+export class UserRepository {
+  constructor() {
+    // initialize the DB model
+  }
+  
+  public getUserById(id: string): Single<User> {
+    return Single.fromPromise(model.getById(id))
+      .bind(UserRepository.toBusinessModel);
+  }
+  
+  private static toBusinessModel(doc: UserDocument): User {
+    return { name: doc.name, id: doc._id };
+  }
+}
+    \end{minted}
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}{Conclusion}
+    \begin{itemize}
+        \item Coq implementation: \\
+        \url{github.com/aerabi/lttt}
+        \item TypeScript implementation: \\
+        \url{github.com/aerabi/lttt-typescript}
+        \item Presentation template: \\
+        \url{github.com/aerabi/beamer-uni-freiburg}
+    \end{itemize}
+\end{frame}
+
 \begin{frame}[t,allowframebreaks]
 \nocite{*}
 \frametitle{References}
