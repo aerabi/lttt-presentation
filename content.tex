@@ -245,6 +245,33 @@ The types in $\mathrm{TLC}$ form an $\mathrm{IPL}$. Furthermore:
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Linear Logic}
+    The linear logic \cite{DBLP:journals/tcs/Girard87}, LL$(0, \multimap, \oplus, \otimes, !)$ or simply LL, consists of the following language:
+    \[
+    \alpha ::= 0 \mid a \mid \alpha \multimap \alpha \mid \alpha \oplus \alpha \mid \alpha \otimes \alpha \mid~ !\alpha.
+    \]
+    
+    \begin{itemize}
+        \item $0$ is linear version of $\bot$,
+        \item $!$ is called \textit{of course} or \textit{bang} and makes the formulae non-linear,
+        \item $\multimap$ is bilinear version of implication,
+        \item $\oplus$ is called \textit{additive disjunction} is the bilinear version of or,
+        \item $\otimes$ is called \textit{multiplicative conjunction} or \textit{tensor} is the bilinear version of and.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Linear/Non-Linear Logic}
+    The linear/non-linear logic \cite{DBLP:conf/csl/Benton94}, or simply LNL, consists of the following language:
+    \begin{align*}
+        &\tau ::= \bot \mid t \mid \tau \times \tau \mid \tau + \tau \mid \tau \rightarrow \tau \mid \ceil{\alpha}, \\
+        &\alpha ::= 0 \mid a \mid \alpha \otimes \alpha \mid \alpha \oplus \alpha \mid \alpha \multimap \alpha \mid \floor{\tau}.
+    \end{align*}
+    \begin{itemize}
+        \item $\ceil{\cdot}$ is called \textit{lift},
+        \item $\floor{\cdot}$ is called \textit{lower}.
+    \end{itemize}
+\end{frame}
+
 \section{Linear-Time Temporal Type Theory}
 
 \section{Coq Implementation}
