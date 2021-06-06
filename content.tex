@@ -272,6 +272,46 @@ The types in $\mathrm{TLC}$ form an $\mathrm{IPL}$. Furthermore:
     \end{itemize}
 \end{frame}
 
+\subsection{Temporal Logic}
+
+\begin{frame}{Modal Logic}
+    The language of the modal logic is defined by the following grammar:
+    \[
+    \alpha ::= \bot \mid a \mid \alpha \rightarrow \alpha \mid \alpha \vee \alpha \mid \alpha \wedge \alpha \mid \diamond\alpha \mid \square\alpha.
+    \]
+    
+    \begin{itemize}
+        \item $\diamond\varphi$ reads ``possibly $\varphi$'',
+        \item $\square\varphi$ reads ``necessarily $\varphi$''.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Temporal Logic}
+    Formulating temporal logic as a modal logic was first done by Prior \cite{PRIOR1957,PRIOR1967,prior1968papers} and then ported to computer science by Pnueli \cite{DBLP:conf/focs/Pnueli77}.
+    
+    \begin{itemize}
+        \item $\diamond\varphi$ reads ``it will at some time be the case that $\varphi$''.
+        \item $\square\varphi$ reads ``it will always be the case that $\varphi$''.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Linear-Time Temporal Logic}
+    Linear-time temporal logic \cite{DBLP:conf/focs/Pnueli77}, or LTL, reasons about linear time.
+    
+    Some properties of LTL:
+    \begin{itemize}
+        \item Future and always are dual:
+        \begin{eqnarray*}
+        \neg\diamond\varphi &\equiv& \square\neg\varphi, \\
+        \neg\square\varphi &\equiv& \diamond\neg\varphi.
+        \end{eqnarray*}
+        \item $\square\varphi \rightarrow \square\square\varphi$,
+        \item $\square\square\varphi \rightarrow \square\varphi$,
+        \item $\diamond\varphi \rightarrow \diamond\diamond\varphi$, 
+        \item $\diamond\diamond\varphi \rightarrow \diamond\varphi$.
+    \end{itemize}
+\end{frame}
+
 \section{Linear-Time Temporal Type Theory}
 
 \section{Coq Implementation}
