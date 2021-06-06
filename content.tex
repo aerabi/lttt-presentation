@@ -17,6 +17,25 @@
 \newcommand{\n}{\mathfrak{n}}
 \newcommand{\dbrack}[1]{\left\llbracket #1 \right\rrbracket}
 
+\newcommand{\angkv}{\langle k, v \rangle}
+\newcommand{\angkvp}{\langle k', v' \rangle}
+
+\begin{frame}[fragile]{Motivation}
+    \begin{minted}{typescript}
+  makePace(user: UserContext): Observable<boolean> {
+    return this.complianceRuleLinkService
+      .officiallyGetAllNeedingAHeartbeat(user)
+      .pipe(projectToFormer())
+      .pipe(flatMap(vertexId => this.deviceGroupService.getById(user, vertexId)))
+      .pipe(map(vertex => vertex.deviceIds))
+      .pipe(flatMap(deviceIds => this.deviceService.filterLastPushedAnciently(user, deviceIds, this.heartbeat)))
+      .pipe(map(devices => devices.map(device => device.deviceId)))
+      .pipe(tap(deviceIds => this.deviceService.updateLastPushed(user, deviceIds)))
+      .pipe(flatMap(deviceIds => this.deviceCommandService.pushDevices(user, deviceIds)));
+  }
+    \end{minted}
+\end{frame}
+
 \begin{frame}[fragile]
     \frametitle{Main Goal}
   
@@ -391,6 +410,118 @@ The types in $\mathrm{TLC}$ form an $\mathrm{IPL}$. Furthermore:
 \end{frame}
 
 \section{Coq Implementation}
+
+\begin{frame}{Coq Implementation}
+    The Coq implementation consists of:
+    \begin{itemize}
+        \item A generic store, used as the typing context,
+        \item LTTT typing rules and operational semantics.
+    \end{itemize}
+    
+    Two more typing rules are introduced for typing substitution:
+    \[
+    \infer[\mbox{$\t$-Subst}]{\Gamma \vdash \t[x \mapsto \t'] : \T}{
+    \Gamma, x : \T' \vdash \t : \T
+    &
+    \Gamma \vdash \t' : \T'
+    }
+    \]
+    \[
+    \infer[\mbox{$\e$-Subst}]{\Gamma; \Delta_1, \Delta_2 \vdash \e[x \mapsto \e'] : \A}{
+    \Gamma; \Delta_1, x : \A' \vdash \e : \A
+    &
+    \Gamma; \Delta_2 \vdash \e' : \A'
+    }
+    \]
+\end{frame}
+
+\begin{frame}{Coq Implementation Results}
+    Two results are proved in Coq:
+    
+    \begin{lemma}[$\t$-Preservation]
+    \label{lemma:t-preservation}
+    For all $\Gamma, \t, \t', \T$, if $\Gamma \vdash \t : \T$ and $\t \leadsto \t'$, then $\Gamma \vdash \t' : \T$.
+    \end{lemma}
+    
+    \begin{lemma}[Weak $\e$-Preservation]
+    \label{lemma:e-preservation-weak}
+    For all $\e, \e', \A$, if $\vdash \e : \A$ and $\e \leadsto \e'$, then $\vdash \e' : \A$.
+    \end{lemma}
+\end{frame}
+
+\subsection{Generic Store}
+
+\begin{frame}[allowframebreaks]{Generic Store}
+    Generic store is a the data structure used for the typing context.
+    \[
+    S ::= \emptyset~|~S :: \angkv.
+    \]
+    
+    \begin{itemize}
+        \item Concatenation.
+        \[
+        S \circ S' =
+        \begin{cases}
+            S, & S' = \emptyset, \\
+            (S \circ S'') :: \angkv, & S' = S'' :: \angkv.
+        \end{cases}
+        \]
+        
+        \item Membership.
+        \begin{itemize}
+            \item If $S = S' :: \angkv$, then $\angkv \in S$,
+            \item If $\angkvp \in S'$ and $k \not= k'$, then $\angkvp \in S :: \angkv$. \qedhere
+        \end{itemize}
+    \end{itemize}
+    
+    \begin{lemma}
+    Let $B$ and $C$ be stores, $k$ a key, and $v$ a value. Then:
+    \begin{itemize}
+        \item If $\angkv \in C$, then $\angkv \in B \circ C$,
+        \item If $\angkv \in B$ and $\ang{k, \cdot} \not\in C$, then $\angkv \in B \circ C$,
+        \item If $\angkv \in B \circ C$, then either $\angkv \in B$ or $\angkv \in C$.
+    \end{itemize}
+    \end{lemma}
+    
+    \begin{definition}[Equivalence]
+        \begin{itemize}
+            \item If for every $\angkv \in S$ we have $\angkv \in S'$, we write $S \sqsubseteq S'$.
+            \item If $S \sqsubseteq S'$ and $S' \sqsubseteq S$, we write $S \equiv S'$ and say they are equivalent.
+        \end{itemize}
+    \end{definition}
+    
+    \begin{axiom}[Extensionality]
+        If $B \equiv C$ then $B = C$.
+    \end{axiom}
+    
+    \begin{theorem}[Exchange]
+    For stores $A, B, C, D$, if $B \circ C$ is has no duplicate keys, then $A \circ B \circ C \circ D = A \circ C \circ B \circ D$.
+    \end{theorem}
+    
+    \begin{corollary}[Append Commute]
+    For any store $S$, keys $k, k'$, and values $v, v'$, if $k \not= k'$, then $S :: \ang{k, v} :: \ang{k', v'} = S :: \ang{k', v'} :: \ang{k, v}$.
+    \end{corollary}
+    \begin{proof}
+    By writing $S :: \ang{k, v} :: \ang{k', v'}$ as $S \circ (\emptyset :: \ang{k, v}) \circ (\emptyset :: \ang{k', v'})$, realizing that $(\emptyset :: \ang{k, v}) \circ (\emptyset :: \ang{k', v'})$ is unique-paired, and then using exchange.
+    \end{proof}
+\end{frame}
+
+\begin{frame}[fragile]{Coq Proof of Append Commute}
+    \begin{minted}[fontsize=\small]{coq}
+Proposition append_commut : forall s k v k' v',
+  unique_paired (append empty k v o append empty k' v') ->
+  append (append s k v) k' v' = append (append s k' v') k v.
+Proof.
+  intros. rewrite -> append_to_concat.
+  rewrite -> append_to_concat.
+  rewrite <- id_r with
+    (m := s o (append empty k v) o (append empty k' v')).
+  rewrite -> exchange; auto. rewrite -> id_r.
+  repeat rewrite <- append_to_concat.
+  reflexivity.
+Qed.
+    \end{minted}
+\end{frame}
 
 \section{TypeScript Implementation}
 
